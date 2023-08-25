@@ -1,6 +1,7 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
+import "notiflix/dist/notiflix-3.2.6.min.css";
 
 function convertMs(ms) {
   const second = 1000;
@@ -15,3 +16,44 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
+}
+
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    const selectedDate = selectedDates[0];
+    if (selectedDate.getTime() <= new Date().getTime()) {
+      Notiflix.Notify.failure('Please choose a date in the future.');
+      return;
+    }
+    document.querySelector('[data-start]').disabled = false;
+  },
+};
+
+flatpickr('#datetime-picker', options);
+
+document.querySelector('[data-start]').addEventListener('click', () => {
+  const endDate = new Date(document.querySelector('#datetime-picker').value);
+  const IntervalId = setInterval(() => {
+    const now = new Date();
+    const remainingTime = endDate - now;
+
+    if (remainingTime <= 0) {
+      clearInterval(IntervalId);
+      document.querySelector('[data-start]').disabled = true;
+      return;
+    }
+    const { days, hours, minutes, seconds } = convertMs(remainingTime);
+    document.querySelector('[data-days]').textContent = addLeadingZero(days);
+    document.querySelector('[data-hours]').textContent = addLeadingZero(hours);
+    document.querySelector('[data-minutes]').textContent =
+      addLeadingZero(minutes);
+    document.querySelector('[data-seconds]').textContent =
+      addLeadingZero(seconds);
+  }, 1000);
+});
