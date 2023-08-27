@@ -1,7 +1,7 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
-import "notiflix/dist/notiflix-3.2.6.min.css";
+import 'notiflix/dist/notiflix-3.2.6.min.css';
 
 function convertMs(ms) {
   const second = 1000;
@@ -19,6 +19,7 @@ function convertMs(ms) {
 function addLeadingZero(value) {
   return value.toString().padStart(2, '0');
 }
+document.querySelector('[data-start]').disabled = true;
 
 const options = {
   enableTime: true,
@@ -42,6 +43,8 @@ document.querySelector('[data-start]').addEventListener('click', () => {
   const IntervalId = setInterval(() => {
     const now = new Date();
     const remainingTime = endDate - now;
+    document.querySelector('[data-start]').disabled = true;
+    document.querySelector('#datetime-picker').disabled = true;
 
     if (remainingTime <= 0) {
       clearInterval(IntervalId);
